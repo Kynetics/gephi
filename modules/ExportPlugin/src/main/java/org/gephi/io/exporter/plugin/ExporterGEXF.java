@@ -53,12 +53,7 @@ import javanet.staxutils.IndentingXMLStreamWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import org.gephi.graph.api.*;
-import org.gephi.graph.api.types.IntervalMap;
-import org.gephi.graph.api.types.IntervalSet;
-import org.gephi.graph.api.types.TimeMap;
-import org.gephi.graph.api.types.TimeSet;
-import org.gephi.graph.api.types.TimestampMap;
-import org.gephi.graph.api.types.TimestampSet;
+import org.gephi.graph.api.types.*;
 import org.gephi.io.exporter.api.FileType;
 import org.gephi.io.exporter.spi.CharacterExporter;
 import org.gephi.io.exporter.spi.GraphExporter;
@@ -366,6 +361,8 @@ public class ExporterGEXF implements GraphExporter, CharacterExporter, LongTask 
                 String valString;
                 if (column.isArray()) {
                     valString = AttributeUtils.printArray(val);
+                } else if(column.getTypeClass() == Base64.class){
+                    valString = Base64.fromDecodeString(val.toString()).toEncodedString();
                 } else {
                     valString = val.toString();
                 }

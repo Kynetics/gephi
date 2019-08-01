@@ -50,6 +50,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.gephi.graph.api.AttributeUtils;
 import org.gephi.graph.api.TimeFormat;
 import org.gephi.graph.api.TimeRepresentation;
+import org.gephi.graph.api.types.Base64;
 import org.gephi.io.importer.api.*;
 import org.gephi.io.importer.spi.FileImporter;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -517,7 +518,10 @@ public class ImporterGEXF implements FileImporter, LongTask {
                 } else {
                     Object valueObj = null;
                     try {
-                        valueObj = AttributeUtils.parse(value, column.getTypeClass());
+                        System.out.println("parse: "+value);
+
+                        valueObj = AttributeUtils.parse(column.getTypeClass() == Base64.class ?
+                                Base64.decode(value) : value, column.getTypeClass());
                         element.setValue(column.getId(), valueObj);
                     } catch (Exception e) {
                         report.logIssue(new Issue(NbBundle.getMessage(ImporterGEXF.class, "importerGEXF_error_datavalue", fore, element, column.getTitle()), Issue.Level.SEVERE));
@@ -988,7 +992,9 @@ public class ImporterGEXF implements FileImporter, LongTask {
                 attributeType = char[].class;
             } else if (type.equalsIgnoreCase("listshort")) {
                 attributeType = short[].class;
-            } else {
+            } else if(type.equalsIgnoreCase(Base64.NAME)){
+                attributeType = Base64.class;
+            }else {
                 report.logIssue(new Issue(NbBundle.getMessage(ImporterGEXF.class, "importerGEXF_error_attributetype2", type), Issue.Level.SEVERE));
                 return;
             }
